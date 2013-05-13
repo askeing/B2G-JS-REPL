@@ -13,9 +13,9 @@ except (OSError, IOError):
 # dependencies
 deps = ['marionette_client==0.5.27', ]
 
-setup(name='b2g_repl',
+setup(name='b2g_js',
       version=version,
-      description="REPL Environment for B2G",
+      description="JS REPL Environment for B2G",
       long_description=description,
       classifiers=[], # Get strings from http://pypi.python.org/pypi?%3Aaction=list_classifiers
       keywords='mozilla',
@@ -29,7 +29,7 @@ setup(name='b2g_repl',
       entry_points="""
       # -*- Entry points: -*-
       [console_scripts]
-      b2g_repl = b2g_repl.runner:main
+      b2g_js = b2g_js.runner:main
       """,
       install_requires=deps,
       )
