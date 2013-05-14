@@ -81,7 +81,11 @@ class Runner(object):
         try:
             # connect App by ID
             app_id = int(input)
+            iframes = self._get_all_iframes_id_name_pair()
+            print 'Connect to', iframes[str(app_id)]
             self.m.switch_to_frame(app_id)
+            print 'Enter \'exit\' or Crtl+D to exit the shell.'
+            return True
         except(ValueError):
             # connect App by substring
             iframes = self._get_all_iframes_id_name_pair()
@@ -94,7 +98,7 @@ class Runner(object):
                 target = suitable_iframes.keys()[0]
                 print 'Connect to', suitable_iframes.values()[0]
                 self.m.switch_to_frame(int(target))
-                print 'Enter \'exit\' to exit the shell.'
+                print 'Enter \'exit\' or Crtl+D to exit the shell.'
                 return True
             # exit if there are more than one app fit the query
             elif len(suitable_iframes) > 1:
