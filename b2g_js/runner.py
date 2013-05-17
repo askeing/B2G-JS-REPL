@@ -11,7 +11,11 @@ from marionette import Marionette
 
 
 class Runner(object):
-
+    
+    _INPUT_NONE = ''
+    _INPUT_EXIT_COMMAND = 'exit'
+    _INPUT_MULTIPLE_LINE = ' \\'
+    
     def __init__(self, **kwargs):
         # Added parser
         parser = OptionParser()
@@ -60,18 +64,39 @@ class Runner(object):
     def start_js(self):
         try:
             while True:
-                input = raw_input('$ ')
-                if input == '' or input.lower() == 'exit':
+                input = raw_input('>>> ')
+                # if input is EXIT command, exit this program
+                if input.lower() == self._INPUT_EXIT_COMMAND:
                     self.goodbye()
                     break;
-                try:
-                    print self.m.execute_script(input)
-                except Exception as ex:
-                    print str(ex.message)
+                # if input is NONE, then do nothing and keep going...
+                elif input == self._INPUT_NONE:
+                    continue
+                # if the postfix of input is MULTIPLE_LINE, then record this line and wait the next line until no input with MULTIPLE_LINE.
+                elif input.endswith(self._INPUT_MULTIPLE_LINE):
+                    input_multiple = input[:len(input)-1] + '; '
+                    while True:
+                        next_input = raw_input('... ')
+                        if next_input.endswith(self._INPUT_MULTIPLE_LINE):
+                            input_multiple = input_multiple + next_input[:len(next_input)-1] + '; '
+                            pass
+                        else:
+                            input_multiple = input_multiple + next_input + '; '
+                            print self.execute_script(input_multiple)
+                            break
+                # if input is NOT above inputs, then run marionette.execute_script(INPUT) and print return value.
+                else:
+                    print self.execute_script(input)
         except EOFError:
             self.goodbye()
             exit()
         exit()
+
+    def execute_script(self, script):
+        try:
+            return self.m.execute_script(script)
+        except Exception as ex:
+            print str(ex.message)
 
     def goodbye(self):
         print 'End. Bye!!'
