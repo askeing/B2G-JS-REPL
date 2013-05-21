@@ -12,7 +12,7 @@ from b2g_js.cmd.commands import *
 
 
 class Runner(object):
-    
+
     _INPUT_NONE = ''
     _INPUT_EXIT_COMMAND = 'exit'
     _INPUT_MULTIPLE_LINE = ' \\'
@@ -22,7 +22,7 @@ class Runner(object):
     _sync_prompt = '>>> '
     _async_prompt = 'a>> '
     _prompt = _sync_prompt
-    
+
     def __init__(self, **kwargs):
         # Added parser
         parser = OptionParser()
@@ -43,11 +43,10 @@ class Runner(object):
                           default=None,
                           help='Connect to the App iframe.' \
                                'Use # ID or substring of App URL to connect.')
-        
-        (options, args) = parser.parse_args()
 
+        (options, args) = parser.parse_args()
         self.connect = options.connect
-        
+
         # start marionette session
         self.m = Marionette(options.address, options.port)
         self.m.start_session()
@@ -58,7 +57,7 @@ class Runner(object):
         # list active iframes
         elif self.connect == None:
             self.list_active_iframes()
-        
+
         # connect to App
         if self.connect == None:
             exit(0)
@@ -81,7 +80,7 @@ class Runner(object):
                 # if input is EXIT command, exit this program
                 if input.lower() == self._INPUT_EXIT_COMMAND:
                     self.goodbye()
-                    break;
+                    break
 
                 # if input is NONE, then do nothing and keep going...
                 elif input == self._INPUT_NONE:
@@ -93,11 +92,11 @@ class Runner(object):
 
                 # if the postfix of input is MULTIPLE_LINE, then record this line and wait the next line until no input with MULTIPLE_LINE.
                 elif input.endswith(self._INPUT_MULTIPLE_LINE):
-                    input_multiple = input[:len(input)-1] + '; '
+                    input_multiple = input[:len(input) - 1] + '; '
                     while True:
                         next_input = raw_input('... ')
                         if next_input.endswith(self._INPUT_MULTIPLE_LINE):
-                            input_multiple = input_multiple + next_input[:len(next_input)-1] + '; '
+                            input_multiple = input_multiple + next_input[:len(next_input) - 1] + '; '
                             pass
                         else:
                             input_multiple = input_multiple + next_input + '; '
@@ -153,21 +152,20 @@ class Runner(object):
                 return True
             # exit if there are more than one app fit the query
             elif len(suitable_iframes) > 1:
-                print 'There are more than one Apps fit the query string [', input,'].'
+                print 'There are more than one Apps fit the query string [', input, '].'
                 print '{0:2s} {1:s}'.format('#', 'App URL')
                 for k, v in sorted(suitable_iframes.items()):
                     print '{0:2s} {1:s}'.format(k, v)
                 return False
             # exit if there is no app fit the query
             else:
-                print 'There is no App fit the query string [', input,'].'
+                print 'There is no App fit the query string [', input, '].'
                 return False
-            
 
     def _get_all_iframes(self):
         iframes = self.m.execute_script('return document.getElementsByTagName("iframe")')
         return iframes
-    
+
     def _get_all_iframes_id_name_pair(self):
         iframes = self._get_all_iframes()
         result = {}

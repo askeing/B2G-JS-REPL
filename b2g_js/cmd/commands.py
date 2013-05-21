@@ -9,19 +9,19 @@ from marionette import Marionette
 
 
 class CmdDispatcher(object):
-    
+
     _MSG_NO_CMD = 'No such command.'
     _CMD_HELP = ':h'
     _CMD_EXIT = ':q'
     _CMD_WRITE_SOURCE_TO_FILE = ':w'
     _CMD_SWITCH_SYNC_ASYNC = ':s'
-    
+
     def __init__(self, runner, command):
         self.super_runner = runner
         self.m = runner.m
         self.command = command
         self()
-   
+
     def __call__(self):
         if self.command.lower().startswith(self._CMD_EXIT):
             raise EOFError()
@@ -44,7 +44,7 @@ class CmdDispatcher(object):
 
 
 class PrintUsageCmd(object):
-    
+
     def __init__(self):
         self()
 
@@ -70,7 +70,7 @@ class SwitchJSExecutionCmd(object):
 
 
 class WritePageSourceToFileCmd(object):
-    
+
     def __init__(self, marionette, dest):
         self.m = marionette
         self.dest = dest
