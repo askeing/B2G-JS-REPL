@@ -21,7 +21,7 @@ $ b2g_js -l
 
 ### Multi-line JS
 
-Add " \" after javascript.
+Add " \" (space & backslash) after javascript.
 
 
 ## Example
@@ -38,12 +38,10 @@ full_unagi      device
 3          app://sms.gaiamobile.org/index.html
 4          app://keyboard.gaiamobile.org/index.html
 (.env)user@host:~/workspace/B2G-JS-REPL$ b2g_js -c2
-#  Status  App URL
-1  active  app://homescreen.gaiamobile.org/index.html#root
-2  active  app://settings.gaiamobile.org/index.html#root
 Start...
 Connect to app://settings.gaiamobile.org/index.html#root
 Enter 'exit' or Crtl+D to exit the shell.
+And enter ':h' for more commands.
 >>> var str_1 = "Hello World " \
 ... var str_2 = document.URL \
 ... return str_1 + str_2
