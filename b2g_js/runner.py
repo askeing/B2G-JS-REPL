@@ -8,6 +8,7 @@ import readline
 import re
 
 from marionette import Marionette
+from b2g_js.cmd.commands import *
 
 
 class Runner(object):
@@ -15,6 +16,12 @@ class Runner(object):
     _INPUT_NONE = ''
     _INPUT_EXIT_COMMAND = 'exit'
     _INPUT_MULTIPLE_LINE = ' \\'
+    _INPUT_COMMAND_PREFIX = ':'
+
+    _is_async = False
+    _sync_prompt = '>>> '
+    _async_prompt = 'a>> '
+    _prompt = _sync_prompt
     
     def __init__(self, **kwargs):
         # Added parser
@@ -39,6 +46,8 @@ class Runner(object):
         
         (options, args) = parser.parse_args()
 
+        self.connect = options.connect
+        
         # start marionette session
         self.m = Marionette(options.address, options.port)
         self.m.start_session()
@@ -47,11 +56,10 @@ class Runner(object):
         if options.enable_list == True:
             self.list_all_iframes()
         # list active iframes
-        else:
+        elif self.connect == None:
             self.list_active_iframes()
         
         # connect to App
-        self.connect = options.connect
         if self.connect == None:
             exit(0)
         else:
@@ -61,17 +69,28 @@ class Runner(object):
             else:
                 exit(-1)
 
+    def switch_sync_async(self):
+        self._is_async = not self._is_async
+        self._prompt = self._async_prompt if self._is_async else self._sync_prompt
+        print 'Swith to', ('Async' if self._is_async else 'Sync'), 'JS execution'
+
     def start_js(self):
         try:
             while True:
-                input = raw_input('>>> ')
+                input = raw_input(self._prompt)
                 # if input is EXIT command, exit this program
                 if input.lower() == self._INPUT_EXIT_COMMAND:
                     self.goodbye()
                     break;
+
                 # if input is NONE, then do nothing and keep going...
                 elif input == self._INPUT_NONE:
                     continue
+
+                # if input start with ":", it should be the command.
+                elif input.startswith(self._INPUT_COMMAND_PREFIX):
+                    CmdDispatcher(self, input)
+
                 # if the postfix of input is MULTIPLE_LINE, then record this line and wait the next line until no input with MULTIPLE_LINE.
                 elif input.endswith(self._INPUT_MULTIPLE_LINE):
                     input_multiple = input[:len(input)-1] + '; '
@@ -84,9 +103,12 @@ class Runner(object):
                             input_multiple = input_multiple + next_input + '; '
                             print self.execute_script(input_multiple)
                             break
-                # if input is NOT above inputs, then run marionette.execute_script(INPUT) and print return value.
+
+                # if input is NOT above inputs, then run marionette.execute_script(INPUT)/marionette.execute_async_script(INPUT)
+                # and print return value.
                 else:
                     print self.execute_script(input)
+
         except EOFError:
             self.goodbye()
             exit()
@@ -94,7 +116,10 @@ class Runner(object):
 
     def execute_script(self, script):
         try:
-            return self.m.execute_script(script)
+            if self._is_async:
+                return self.m.execute_async_script(script)
+            else:
+                return self.m.execute_script(script)
         except Exception as ex:
             print str(ex.message)
 
@@ -109,7 +134,8 @@ class Runner(object):
             iframes = self._get_all_iframes_id_name_pair()
             print 'Connect to', iframes[str(app_id)]
             self.m.switch_to_frame(app_id)
-            print 'Enter \'exit\' or Crtl+D to exit the shell.'
+            print 'Enter \'%s\' or Crtl+D to exit the shell.' % self._INPUT_EXIT_COMMAND
+            print 'And enter \':h\' for more commands.'
             return True
         except(ValueError):
             # connect App by substring
