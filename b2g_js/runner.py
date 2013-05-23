@@ -17,6 +17,7 @@ class Runner(object):
     _INPUT_EXIT_COMMAND = 'exit'
     _INPUT_MULTIPLE_LINE = ' \\'
     _INPUT_COMMAND_PREFIX = ':'
+    _INPUT_SYSTEM_APP_KEYWORD = 'system'
 
     _is_async = False
     _sync_prompt = '>>> '
@@ -130,13 +131,27 @@ class Runner(object):
         try:
             # connect App by ID
             app_id = int(input)
-            iframes = self._get_all_iframes_id_name_pair()
-            print 'Connect to', iframes[str(app_id)]
-            self.m.switch_to_frame(app_id)
+            print 'app_id', app_id
+            if app_id < 0:
+                print 'Connect to', self._get_system_URL()
+                self.m.switch_to_frame()
+            else:
+                iframes = self._get_all_iframes_id_name_pair()
+                print 'Connect to', iframes[str(app_id)]
+                self.m.switch_to_frame(app_id)
             print 'Enter \'%s\' or Crtl+D to exit the shell.' % self._INPUT_EXIT_COMMAND
             print 'And enter \':h\' for more commands.'
             return True
+
         except(ValueError):
+            # connect to System app
+            if input.lower() == self._INPUT_SYSTEM_APP_KEYWORD:
+                print 'Connect to', self._get_system_URL()
+                self.m.switch_to_frame()
+                print 'Enter \'%s\' or Crtl+D to exit the shell.' % self._INPUT_EXIT_COMMAND
+                print 'And enter \':h\' for more commands.'
+                return True
+
             # connect App by substring
             iframes = self._get_all_iframes_id_name_pair()
             suitable_iframes = {}
@@ -148,7 +163,8 @@ class Runner(object):
                 target = suitable_iframes.keys()[0]
                 print 'Connect to', suitable_iframes.values()[0]
                 self.m.switch_to_frame(int(target))
-                print 'Enter \'exit\' or Crtl+D to exit the shell.'
+                print 'Enter \'%s\' or Crtl+D to exit the shell.' % self._INPUT_EXIT_COMMAND
+                print 'And enter \':h\' for more commands.'
                 return True
             # exit if there are more than one app fit the query
             elif len(suitable_iframes) > 1:
@@ -161,6 +177,10 @@ class Runner(object):
             else:
                 print 'There is no App fit the query string [', input, '].'
                 return False
+
+    def _get_system_URL(self):
+        system_URL = self.m.execute_script('return document.URL')
+        return system_URL
 
     def _get_all_iframes(self):
         iframes = self.m.execute_script('return document.getElementsByTagName("iframe")')
@@ -177,6 +197,7 @@ class Runner(object):
     def list_all_iframes(self):
         iframes = self._get_all_iframes()
         print '{0:2s} {1:7s} {2:s}'.format('#', 'Status', 'App URL')
+        print '{0:2s} {1:7s} {2:s}'.format('-1', '', self._get_system_URL())
         for idx in range(0, iframes['length']):
             iframe = iframes[str(idx)]
             print '{0:2s} {1:7s} {2:s}'.format(str(idx), ('active' if iframe.is_displayed() else ''), iframe.get_attribute('src'))
