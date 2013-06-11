@@ -43,7 +43,7 @@ class Runner(object):
                           action='store', type='string', dest='connect',
                           default=None,
                           help='Connect to the App iframe.' \
-                               'Use # ID or substring of App URL to connect.')
+                               'Use # ID or App URL to connect.')
 
         (options, args) = parser.parse_args()
         self.connect = options.connect

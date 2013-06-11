@@ -17,6 +17,8 @@ class CmdDispatcher(object):
     _CMD_WRITE_SOURCE_TO_FILE = ':w'
     _CMD_SWITCH_SYNC_ASYNC = ':s'
     _CMD_IMPORT_JS_COMPONENT = ':i'
+    _CMD_LIST_FRAMES = ':l'
+    _CMD_OPEN_FRAME = ':o'
 
     def __init__(self, runner, command):
         self.super_runner = runner
@@ -49,12 +51,21 @@ class CmdDispatcher(object):
             ImportJSComponentCmd(self.m, file)
             pass
 
+        elif self.command.lower().startswith(self._CMD_LIST_FRAMES):
+            ListFramesCmd(self.m, self.super_runner)
+
+        elif self.command.lower().startswith(self._CMD_OPEN_FRAME):
+            args = self.command.split()
+            if len(args) > 1:
+                OpenFrameCmd(self.m, self.super_runner, args[1])
+            else:
+                OpenFrameCmd(self.m, self.super_runner)
+
         else:
             print self._MSG_NO_CMD, self.command
 
 
 class PrintUsageCmd(object):
-
     def __init__(self):
         self()
 
@@ -68,11 +79,12 @@ class PrintUsageCmd(object):
         #print output_format.format(':e', '<FILE>', 'Read javascript from file. Do nothing if no <FILE>.')
         print output_format.format(CmdDispatcher._CMD_SWITCH_SYNC_ASYNC, '', 'Switch sync/async javascript execution.')
         print output_format.format(CmdDispatcher._CMD_IMPORT_JS_COMPONENT, '<FILE>', 'Import javascript from file. List all components if no <FILE>.')
+        print output_format.format(CmdDispatcher._CMD_LIST_FRAMES, '', 'List all apps of b2g instance.')
+        print output_format.format(CmdDispatcher._CMD_OPEN_FRAME, '<KEYWORD>', 'Connect to the App iframe. Using # ID or App_URL as <KEYWORD>.')
         print output_format.format('', 'exit', 'Exit.')
 
 
 class SwitchJSExecutionCmd(object):
-
     def __init__(self, runner):
         self(runner)
 
@@ -81,7 +93,6 @@ class SwitchJSExecutionCmd(object):
 
 
 class WritePageSourceToFileCmd(object):
-
     def __init__(self, marionette, dest):
         self.m = marionette
         self.dest = dest
@@ -94,7 +105,6 @@ class WritePageSourceToFileCmd(object):
 
 
 class ImportJSComponentCmd(object):
-
     def __init__(self, marionette, file=None):
         self.js_dir = './b2g_js/js_component'
         self.m = marionette
@@ -118,3 +128,40 @@ class ImportJSComponentCmd(object):
                     print 'No JS components "%s" under "%s" folder.' % (self.file, self.js_dir)
         else:
             print 'No JS components under "%s" folder.' % self.js_dir
+
+
+class ListFramesCmd(object):
+    def __init__(self, marionette, super_runner):
+        self.m = marionette
+        self.runner = super_runner
+        self.current_frame = self.runner.get_current_frame()
+        self()
+
+    def __call__(self):
+        self.runner.switch_to_system_frame()
+        self.runner.list_all_iframes()
+        print '# Current'
+        if self.runner.open_app(self.current_frame) == True:
+            pass
+        else:
+            self.runner.open_app(-1)
+
+
+class OpenFrameCmd(object):
+    def __init__(self, marionette, super_runner, input=None):
+        self.m = marionette
+        self.runner = super_runner
+        if input == None:
+            self.input = self.runner.get_current_frame()
+        else:
+            self.input = input
+        self()
+
+    def __call__(self):
+        self.runner.switch_to_system_frame()
+        if self.runner.open_app(self.input) == True:
+            pass
+        elif self.runner.open_app(self.current_frame) == True:
+            pass
+        else:
+            self.runner.open_app(-1)
