@@ -112,7 +112,7 @@ class ImportJSComponentCmd(object):
         self()
 
     def __call__(self):
-        if os.path.exists(self.js_dir) == True:
+        if os.path.exists(self.js_dir):
             # list all js components
             if self.file == None:
                 js_files = [f for f in os.listdir(self.js_dir) if os.path.isfile(os.path.join(self.js_dir, f))]
@@ -121,7 +121,7 @@ class ImportJSComponentCmd(object):
             # check the file exists, then import it
             else:
                 js = os.path.abspath(os.path.join(self.js_dir, self.file))
-                if os.path.exists(js) == True and os.path.isfile(js) == True:
+                if os.path.exists(js) and os.path.isfile(js):
                     print 'Imported:', js
                     self.m.import_script(js)
                 else:
@@ -141,7 +141,7 @@ class ListFramesCmd(object):
         self.runner.switch_to_system_frame()
         self.runner.list_all_iframes()
         print '# Current'
-        if self.runner.open_app(self.current_frame) == True:
+        if self.runner.open_app(self.current_frame):
             pass
         else:
             self.runner.open_app(-1)
@@ -159,9 +159,9 @@ class OpenFrameCmd(object):
 
     def __call__(self):
         self.runner.switch_to_system_frame()
-        if self.runner.open_app(self.input) == True:
+        if self.runner.open_app(self.input):
             pass
-        elif self.runner.open_app(self.current_frame) == True:
+        elif self.runner.open_app(self.current_frame):
             pass
         else:
             self.runner.open_app(-1)
