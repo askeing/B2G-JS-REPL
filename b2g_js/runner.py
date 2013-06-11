@@ -53,7 +53,7 @@ class Runner(object):
         self.m.start_session()
 
         # list all iframes
-        if options.enable_list == True:
+        if options.enable_list:
             self.list_all_iframes()
         # list active iframes
         elif self.connect == None:
@@ -65,7 +65,7 @@ class Runner(object):
         else:
             # connect App
             print 'Start...'
-            if self.open_app(self.connect) == True:
+            if self.open_app(self.connect):
                 self.start_js()
             else:
                 exit(-1)
@@ -117,7 +117,7 @@ class Runner(object):
             exit()
         except Exception as e:
             print e
-            if self.open_app(-1) == True:
+            if self.open_app(-1):
                 self.start_js()
         exit()
 
@@ -222,7 +222,7 @@ class Runner(object):
         result = {}
         for idx in range(0, iframes['length']):
             iframe = iframes[str(idx)]
-            if iframe.is_displayed() == True:
+            if iframe.is_displayed():
                 result[str(idx)] = iframe
         for idx, iframe in result.items():
             print '{0:2s} {1:7s} {2:s}'.format(idx, ('active' if iframe.is_displayed() else ''), iframe.get_attribute('src'))
@@ -241,7 +241,7 @@ class Runner(object):
         iframes = self.get_all_iframes_by_marionette()
         result = []
         for iframe in iframes:
-            if iframe.is_displayed() == True:
+            if iframe.is_displayed():
                 result.append(iframe)
         for iframe in result:
             print iframe.get_attribute('src')
