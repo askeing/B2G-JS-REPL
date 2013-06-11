@@ -115,6 +115,10 @@ class Runner(object):
         except EOFError:
             self.goodbye()
             exit()
+        except Exception as e:
+            print e
+            if self.open_app(-1) == True:
+                self.start_js()
         exit()
 
     def execute_script(self, script):
@@ -135,6 +139,7 @@ class Runner(object):
             app_id = int(input)
             if app_id < 0:
                 print 'Connect to', self._get_system_URL()
+                self.set_current_frame(self._get_system_URL())
                 self.m.switch_to_frame()
             else:
                 iframes = self.get_all_iframes_id_name_pair()
@@ -145,8 +150,9 @@ class Runner(object):
 
         except(ValueError):
             # connect to System app
-            if input.lower() == self._INPUT_SYSTEM_APP_KEYWORD:
+            if (input.lower() == self._INPUT_SYSTEM_APP_KEYWORD) or (input.lower() in self._get_system_URL()):
                 print 'Connect to', self._get_system_URL()
+                self.set_current_frame(self._get_system_URL())
                 self.m.switch_to_frame()
                 return True
 
