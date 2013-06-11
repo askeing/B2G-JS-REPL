@@ -1,5 +1,8 @@
 #B2G-JS-REPL
 
+The tool for interacting with B2G by JS.
+
+
 ## Prepare
 ```bash
 $ adb forward tcp:2828 tcp:2828
