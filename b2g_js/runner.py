@@ -19,6 +19,8 @@ class Runner(object):
     _INPUT_COMMAND_PREFIX = ':'
     _INPUT_SYSTEM_APP_KEYWORD = 'system'
 
+    _KEYBOARD_FRAME_NAME = 'app://keyboard.gaiamobile.org/index.html'
+
     _is_async = False
     _sync_prompt = '>>> '
     _async_prompt = 'a>> '
@@ -145,7 +147,7 @@ class Runner(object):
                 iframes = self.get_all_iframes_id_name_pair()
                 print 'Connect to', iframes[str(app_id)]
                 self.set_current_frame(iframes[str(app_id)])
-                if iframes[str(app_id)] == "app://keyboard.gaiamobile.org/index.html":
+                if iframes[str(app_id)] == self._KEYBOARD_FRAME_NAME:
                     self.m.switch_to_frame(app_id, False)
                 else:
                     self.m.switch_to_frame(app_id)
@@ -170,7 +172,7 @@ class Runner(object):
                 target = suitable_iframes.keys()[0]
                 print 'Connect to', suitable_iframes.values()[0]
                 self.set_current_frame(suitable_iframes.values()[0])
-                if suitable_iframes.values()[0] == "app://keyboard.gaiamobile.org/index.html":
+                if suitable_iframes.values()[0] == self._KEYBOARD_FRAME_NAME:
                     self.m.switch_to_frame(int(target), False)
                 else:
                     self.m.switch_to_frame(int(target))
