@@ -145,7 +145,10 @@ class Runner(object):
                 iframes = self.get_all_iframes_id_name_pair()
                 print 'Connect to', iframes[str(app_id)]
                 self.set_current_frame(iframes[str(app_id)])
-                self.m.switch_to_frame(app_id)
+                if iframes[str(app_id)] == "app://keyboard.gaiamobile.org/index.html":
+                    self.m.switch_to_frame(app_id, False)
+                else:
+                    self.m.switch_to_frame(app_id)
             return True
 
         except(ValueError):
@@ -167,7 +170,10 @@ class Runner(object):
                 target = suitable_iframes.keys()[0]
                 print 'Connect to', suitable_iframes.values()[0]
                 self.set_current_frame(suitable_iframes.values()[0])
-                self.m.switch_to_frame(int(target))
+                if suitable_iframes.values()[0] == "app://keyboard.gaiamobile.org/index.html":
+                    self.m.switch_to_frame(int(target), False)
+                else:
+                    self.m.switch_to_frame(int(target))
                 return True
             # exit if there are more than one app fit the query
             elif len(suitable_iframes) > 1:
