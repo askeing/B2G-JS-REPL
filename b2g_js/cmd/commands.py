@@ -116,17 +116,29 @@ class ImportJSComponentCmd(object):
 
     def __call__(self):
         if os.path.exists(self.js_dir):
+            js_files = [f for f in os.listdir(self.js_dir) if os.path.isfile(os.path.join(self.js_dir, f))]
             # list all js components
             if self.file == None:
-                js_files = [f for f in os.listdir(self.js_dir) if os.path.isfile(os.path.join(self.js_dir, f))]
                 for js_file in js_files:
                     print js_file
-            # check the file exists, then import it
             else:
-                js = os.path.abspath(os.path.join(self.js_dir, self.file))
-                if os.path.exists(js) and os.path.isfile(js):
-                    print 'Imported:', js
-                    self.m.import_script(js)
+                js_file = os.path.abspath(os.path.join(self.js_dir, self.file))
+                indices = [ i for i, s in enumerate(js_files) if self.file in s ]
+                # if file exists, import it
+                if os.path.exists(js_file) and os.path.isfile(js_file):
+                    self.m.import_script(js_file)
+                    print 'Imported:', js_file
+                # if only one file partially matches, ask if user want to import it
+                elif indices.__len__() == 1:
+                    predicted_file = os.path.abspath(os.path.join(self.js_dir, js_files[indices[0]]))
+                    self.m.import_script(predicted_file)
+                    print 'Imported:', predicted_file
+                # if there are more than one partially matched, print out reference file list
+                elif indices.__len__() > 1:
+                    print 'More than one partial file names found:'
+                    for i in indices:
+                        print js_files[i]
+                # nothing partially matched, print out warning
                 else:
                     print 'No JS components "%s" under "%s" folder.' % (self.file, self.js_dir)
         else:
