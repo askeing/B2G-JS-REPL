@@ -53,20 +53,10 @@ hello world!
 
 Add the JS files under ```js_component``` folder, then import them by ```:i``` command.
 ```bash
-$ b2g_js -c -1
-#  Status  App URL
--1         app://system.gaiamobile.org/index.html
-0          app://costcontrol.gaiamobile.org/widget.html
-1          app://homescreen.gaiamobile.org/index.html#root
-2          app://keyboard.gaiamobile.org/index.html
-Start...
-Connect to app://system.gaiamobile.org/index.html
-Enter 'exit' or Crtl+D to exit the shell.
-And enter ':h' for more commands.
 >>> :i 
 gaia_data_layer.js
 >>> :i gaia_data_layer.js
-Imported: /home/askeing/other-projects/B2G-JS-REPL/b2g_js/js_component/gaia_data_layer.js
+Imported: /<path.to.workspace>/B2G-JS-REPL/b2g_js/js_component/gaia_data_layer.js
 >>> :s
 Swith to Async JS execution
 a>> return GaiaDataLayer.getAllContacts();
