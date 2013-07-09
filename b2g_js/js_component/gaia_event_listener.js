@@ -6,7 +6,7 @@
 
 function sniffer (e) {
   var el = e.target;
-  var info  = "\n";
+  var info = "\n";
   info += "\tnodeName: " + el.nodeName + "\n";
   if (el.hasAttribute("className"))
     info += "\tnode ClassName: " + el.ClassName + "\n";
