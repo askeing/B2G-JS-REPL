@@ -13,18 +13,56 @@ $ python setup.py develop
 $ b2g_js -h
 ```
 
-
 ## Tips
 
 ### List all apps
 
+User can list all apps' frame by b2g_js.
 ```bash
 $ b2g_js -l
 ```
 
+In interaction mode, user also can list apps by ```:l``` command.
+```bash
+>>> :l
+#  Status  App URL
+-1         app://system.gaiamobile.org/index.html
+0          app://costcontrol.gaiamobile.org/widget.html
+1  active  app://homescreen.gaiamobile.org/index.html#root
+2  active  app://communications.gaiamobile.org/contacts/index.html
+3          app://keyboard.gaiamobile.org/index.html
+# Current
+Connect to app://system.gaiamobile.org/index.html
+>>> 
+```
+
+
 ### Multi-line JS
 
 Add " \" (space & backslash) after javascript.
+```
+>>> var str_01 = 'hello ' \
+... var str_02 = 'world!' \
+... return str_01 + str_02
+hello world!
+>>> 
+```
+
+
+### Import JS
+
+Add the JS files under ```js_component``` folder, then import them by ```:i``` command.
+```bash
+>>> :i 
+gaia_data_layer.js
+>>> :i gaia_data_layer.js
+Imported: /<path.to.workspace>/B2G-JS-REPL/b2g_js/js_component/gaia_data_layer.js
+>>> :s
+Swith to Async JS execution
+a>> return GaiaDataLayer.getAllContacts();
+[...ALL_CONTACTS...]
+a>> 
+```
 
 
 ## Examples

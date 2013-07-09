@@ -105,8 +105,11 @@ class WritePageSourceToFileCmd(object):
 
 
 class ImportJSComponentCmd(object):
+
+    _FOLDER_JS_COMPONENT = 'js_component'
+
     def __init__(self, marionette, file=None):
-        self.js_dir = './b2g_js/js_component'
+        self.js_dir = os.path.abspath(os.path.join(__file__, os.path.pardir, os.path.pardir, self._FOLDER_JS_COMPONENT))
         self.m = marionette
         self.file = file
         self()
