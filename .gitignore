@@ -1,5 +1,5 @@
 *.pyc
-*.py~
-b2g_repl.egg-info/
+*~
+b2g_js.egg-info/
 .env/
 .idea/
