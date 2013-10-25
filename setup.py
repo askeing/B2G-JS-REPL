@@ -11,7 +11,7 @@ except (OSError, IOError):
     description = ''
 
 # dependencies
-deps = ['marionette_client==0.5.27', ]
+deps = ['marionette_client', ]
 
 setup(name='b2g_js',
       version=version,
