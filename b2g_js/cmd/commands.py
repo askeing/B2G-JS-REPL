@@ -5,6 +5,7 @@
 import os
 import codecs
 import re
+import subprocess
 
 from marionette import Marionette
 
@@ -12,13 +13,15 @@ from marionette import Marionette
 class CmdDispatcher(object):
 
     _MSG_NO_CMD = 'No such command.'
-    _CMD_HELP = ':h'
+
     _CMD_EXIT = ':q'
-    _CMD_WRITE_SOURCE_TO_FILE = ':w'
-    _CMD_SWITCH_SYNC_ASYNC = ':s'
+    _CMD_HELP = ':h'
     _CMD_IMPORT_JS_COMPONENT = ':i'
+    _CMD_LAST_MARIONETTE_LOG = ':m'
     _CMD_LIST_FRAMES = ':l'
     _CMD_OPEN_FRAME = ':o'
+    _CMD_SWITCH_SYNC_ASYNC = ':s'
+    _CMD_WRITE_SOURCE_TO_FILE = ':w'
 
     def __init__(self, runner, command):
         self.super_runner = runner
@@ -61,6 +64,13 @@ class CmdDispatcher(object):
             else:
                 OpenFrameCmd(self.m, self.super_runner)
 
+        elif self.command.lower().startswith(self._CMD_LAST_MARIONETTE_LOG):
+            args = self.command.split()
+            if len(args) > 1:
+                ListLastMarionetteLog(args[1])
+            else:
+                ListLastMarionetteLog()
+
         else:
             print self._MSG_NO_CMD, self.command
 
@@ -70,8 +80,8 @@ class PrintUsageCmd(object):
         self()
 
     def __call__(self):
-        output_head_format = '{0:12s}{1:s}'
-        output_format = '{0:2s} {1:8s} {2:s}'
+        output_head_format = '{0:13s}{1:s}'
+        output_format = '{0:2s} {1:9s} {2:s}'
         print output_head_format.format('#Commands', '#Description')
         print output_format.format(CmdDispatcher._CMD_HELP, '', 'Print usage.')
         print output_format.format(CmdDispatcher._CMD_EXIT, '', 'Exit.')
@@ -81,6 +91,7 @@ class PrintUsageCmd(object):
         print output_format.format(CmdDispatcher._CMD_IMPORT_JS_COMPONENT, '<FILE>', 'Import javascript from file. List all components if no <FILE>.')
         print output_format.format(CmdDispatcher._CMD_LIST_FRAMES, '', 'List all apps of b2g instance.')
         print output_format.format(CmdDispatcher._CMD_OPEN_FRAME, '<KEYWORD>', 'Connect to the App iframe. Using # ID or App_URL as <KEYWORD>.')
+        print output_format.format(CmdDispatcher._CMD_LAST_MARIONETTE_LOG, '<LINES>', 'Print out last few lines of marionette log information.')
         print output_format.format('', 'exit', 'Exit.')
 
 
@@ -180,3 +191,11 @@ class OpenFrameCmd(object):
             pass
         else:
             self.runner.open_app(-1)
+
+class ListLastMarionetteLog(object):
+    def __init__(self, number=5):
+        self.number = number
+        self()
+
+    def __call__(self):
+        print subprocess.Popen("adb logcat -d | grep \"MARIONETTE LOG\" |tail -" + str(self.number), stdout=subprocess.PIPE, shell=True).stdout.read() 

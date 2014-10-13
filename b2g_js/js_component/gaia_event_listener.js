@@ -4,7 +4,7 @@
 
 'use strict';
 
-function sniffer (e) {
+function sniffer(e) {
   var el = e.target;
   var info = "\n";
   info += "\tnodeName: " + el.nodeName + "\n";
@@ -19,13 +19,13 @@ function sniffer (e) {
   for (var i = 0 ; i < attr.length ; i++) {
     info += "\t->" + attr[i].name + "/" + attr[i].value + "\n";
   }
-  console.log(info);
+  log(info);
 }
 
 function movesniffer(e) {
   var touches = e.changedTouches;
   for (var i = 0 ; i < touches.length ; i++) {
-    console.log("Touch Moves from " + touches[i].pageX + " " + touches[i].pageY);
+    log("Touch Moves from " + touches[i].pageX + " " + touches[i].pageY);
   }
 }
 
@@ -50,7 +50,7 @@ var GaiaEventListener = {
   },
 
   test: function() {
-    console.log("test SUCESSFULLY!!!!");
+    log("test SUCESSFULLY!!!!");
   }
 
 };
